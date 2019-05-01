@@ -15,7 +15,7 @@ remotes::install_cran(c("nycflights13", "Lahman"))
 # copy data in
 iris_tbl <- copy_to(sc, iris)
 flights_tbl <- copy_to(sc, nycflights13::flights, "flights")
-batting_tbl <- copy_to(sc, Lahman::Batting, "batting")
+
 
 # look at src tables
 src_tbls(sc)
@@ -24,7 +24,8 @@ src_tbls(sc)
 flights_tbl %>% filter(dep_delay == 2)
 
 
-# get all unique tail numbers count, avg distance, and delay
+# collect all unique tail numbers: count, avg distance, and avg delay
+# with count more than 10 and dist less than 2000
 delay <-
   flights_tbl %>%
   group_by(tailnum) %>%
@@ -42,7 +43,8 @@ delay <-
 # display all unique delay information
 delay
 
-# plot delays
+# plot delay ~ dist with size as count
+# with a smoother
 library(ggplot2)
 ggplot(delay, aes(dist, delay)) +
   geom_point(aes(size = count), alpha = 1/2) +
@@ -139,71 +141,3 @@ prediction_counts
 ml_binary_classification_evaluator(predictions)
 # RMSE
 ml_regression_evaluator(predictions)
-
-
-
-# # Save pipelines
-# ml_save(
-#   flights_pipeline,
-#   "flights_pipeline",
-#   overwrite = TRUE
-# )
-# ml_save(
-#   fitted_pipeline,
-#   "fitted_pipeline",
-#   overwrite = TRUE
-# )
-#
-#
-#
-# # ----------------------------------
-#
-# # after some time....
-#
-# library(sparklyr)
-# library(dplyr)
-# sc <- spark_connect(master = "local")
-#
-# # reload the model from disk
-# reloaded_fitted_pipeline <- ml_load(sc, "fitted_pipeline")
-#
-# flights_tbl <- copy_to(sc, nycflights13::flights, "flights")
-#
-# partitioned_flights <-
-#   sdf_partition(
-#     flights_tbl,
-#     training = 0.1,
-#     testing = 0.1,
-#     rest = 0.8)
-#
-# predictions <-
-#   ml_transform(
-#     reloaded_fitted_pipeline,
-#     partitioned_flights$testing)
-# predictions
-#
-#
-# prediction_counts <-
-#   predictions %>%
-#   group_by(delayed, prediction) %>%
-#   tally() %>%
-#   collect() %>%
-#   mutate(
-#     perc = round(n / sum(n) * 100)
-#   ) %>%
-#   merge(
-#     tribble(
-#       ~correct, ~delayed, ~prediction,
-#       TRUE, 0, 0,
-#       TRUE, 1, 1,
-#       FALSE, 1, 0,
-#       FALSE, 0, 1
-#     )
-#   ) %>%
-#   arrange(desc(correct), desc(n))
-# prediction_counts
-#
-# # Area under ROC
-# ml_binary_classification_evaluator(predictions)
-# # RMSE
-# ml_regression_evaluator(predictions)

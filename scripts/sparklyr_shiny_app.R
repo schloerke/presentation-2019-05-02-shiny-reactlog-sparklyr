@@ -1,3 +1,6 @@
+library(reactlog)
+options(shiny.reactlog = TRUE)
+
 
 
 library(sparklyr)
