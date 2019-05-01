@@ -33,7 +33,9 @@ ui <- fluidPage(
 sc <- spark_connect(master = "local")
 
 # copy data in
-flights_tbl <- copy_to(sc, nycflights13::flights, "flights", overwrite = TRUE)
+if (!exists("flights_tbl")) {
+  flights_tbl <- copy_to(sc, nycflights13::flights, "flights", overwrite = TRUE)
+}
 
 server <- function(input, output) {
 
@@ -45,7 +47,7 @@ server <- function(input, output) {
       summarise(
         count = n(),
         dist = mean(distance, na.rm = TRUE),
-        delay = mean(arr_delay, na.rm = TRUE)) %>%
+        delay = mean(dep_delay, na.rm = TRUE)) %>%
       filter(
         count > input$count,
         dist <= input$dist[2],

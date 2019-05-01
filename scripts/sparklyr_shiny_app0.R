@@ -27,6 +27,14 @@ ui <- fluidPage(
   )
 )
 
+sc <- spark_connect(master = "local")
+
+# copy data in
+if (!exists("flights_tbl")) {
+  flights_tbl <- copy_to(sc, nycflights13::flights, "flights", overwrite = TRUE)
+}
+
+
 server <- function(input, output) {
 
 

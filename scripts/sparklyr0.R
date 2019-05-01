@@ -15,7 +15,6 @@ remotes::install_cran(c("nycflights13", "Lahman"))
 # copy data in
 iris_tbl <- copy_to(sc, iris)
 flights_tbl <- copy_to(sc, nycflights13::flights, "flights")
-batting_tbl <- copy_to(sc, Lahman::Batting, "batting")
 
 # look at src tables
 src_tbls(sc)

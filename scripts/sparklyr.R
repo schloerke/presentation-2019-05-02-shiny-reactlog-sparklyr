@@ -32,7 +32,7 @@ delay <-
   summarise(
     count = n(),
     dist = mean(distance, na.rm = TRUE),
-    delay = mean(arr_delay, na.rm = TRUE)) %>%
+    delay = mean(dep_delay, na.rm = TRUE)) %>%
   filter(
     count > 10,
     dist < 2000,
