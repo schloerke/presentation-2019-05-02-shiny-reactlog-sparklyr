@@ -1,18 +1,22 @@
-# install.packages("sparklyr")
+# install.packages("remotes")
+remotes::install_cran(c("sparklyr", "tidyverse"))
 
 
 library(dplyr)
 library(sparklyr)
+
+# make sure spark is installed
 spark_install()
 
 
+# set up local connection
 sc <- spark_connect(master = "local")
 
 # get data
 remotes::install_cran(c("nycflights13", "Lahman"))
 
 
-# copy data in
+# copy data into spark
 iris_tbl <- copy_to(sc, iris)
 flights_tbl <- copy_to(sc, nycflights13::flights, "flights")
 
@@ -37,6 +41,7 @@ delay
 # plot delay ~ dist with size as count
 # with a smoother
 library(ggplot2)
-ggplot(delay, aes(dist, delay)) +
+ggplot(delay, aes(....)) +
   geom_point(alpha = 1/2) +
+  .... +
   scale_size_area(max_size = 2)
