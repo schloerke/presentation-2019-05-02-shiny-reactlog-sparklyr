@@ -72,13 +72,21 @@ server <- function(input, output) {
 
 
   # get all flight delays, update month and day, select certain columns
-  df <- flights_tbl %>%
+  flights_time <- flights_tbl %>%
     filter(!is.na(dep_delay)) %>%
     mutate(
       month = paste0("m", month),
       day = paste0("d", day)
     ) %>%
     select(dep_delay, sched_dep_time, month, day, distance)
+
+  flights_df <- reactive({
+    flights_time %>%
+      filter(
+        distance <= input$dist[2],
+        distance >= input$dist[1]
+      )
+  })
 
 
   # The following step will create a 5 stage pipeline:
@@ -89,6 +97,7 @@ server <- function(input, output) {
   # 4. R Formula - To define the model’s formula
   # 5. Logistic Model
   reactive_flights_pipeline <- reactive({
+    df <- flights_df()
     sc %>%
       ml_pipeline() %>%
       ft_dplyr_transformer(

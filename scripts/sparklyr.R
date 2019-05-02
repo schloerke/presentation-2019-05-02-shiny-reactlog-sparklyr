@@ -61,7 +61,10 @@ ggplot(delay, aes(dist, delay)) +
 
 # get all flight delays, update month and day, select certain columns
 df <- flights_tbl %>%
-  filter(!is.na(dep_delay)) %>%
+  filter(
+    distance < 2000,
+    !is.na(dep_delay)
+  ) %>%
   mutate(
     month = paste0("m", month),
     day = paste0("d", day)
